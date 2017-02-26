@@ -531,7 +531,7 @@ LogicExp* MakeBoolean(Function* F, int* thenaddr, int* endif) {
 		}
 
 	}
-	curr = last; 
+	curr = last;
 	while (curr) {
 		BoolOp* prev = cast(BoolOp*, curr->super.prev);
 		DeleteBoolOp(curr);
@@ -575,7 +575,7 @@ char* OutputBoolean(Function* F, int* thenaddr, int* endif, int test) {
 
 	exp = MakeBoolean(F, thenaddr, endif);
 	if (error) goto OutputBoolean_CLEAR_HANDLER1;
-	result = WriteBoolean(exp, thenaddr, endif, test);	
+	result = WriteBoolean(exp, thenaddr, endif, test);
 	if (error) goto OutputBoolean_CLEAR_HANDLER1;
 
 OutputBoolean_CLEAR_HANDLER1:
@@ -1340,8 +1340,10 @@ char* PrintFunction(Function* F) {
 	StringBuffer_prune(buff);
 
 	if (IsMain(F->f)) {
-		StringBuffer_addPrintf(buff, "-- params : %s\n", F->funcBlock->code);
+		StringBuffer_addPrintf(buff, "function(%s)\n", F->funcBlock->code);
+		// StringBuffer_addPrintf(buff, "-- params : %s\n", F->funcBlock->code);
 		PrintAstSub(F->funcBlock, buff, 0);
+		StringBuffer_add(buff, "end\n");
 	} else {
 		StringBuffer_addPrintf(buff, "function(%s)\n", F->funcBlock->code);
 		PrintAstSub(F->funcBlock, buff, indent+1);
@@ -1476,7 +1478,7 @@ void ShowState(Function* F) {
 
 	walk = F->vpend.head;
 	i = 0;
-	while (walk) {		
+	while (walk) {
 		int r = cast(VarListItem*, walk)->reg;
 		char* src = cast(VarListItem*, walk)->src;
 		char* dest = cast(VarListItem*, walk)->dest;
@@ -1824,11 +1826,11 @@ char* ProcessCode(Proto* f, int indent, int func_checking, char* funcnumstr) {
 	}
 
 	// make function comment
-	StringBuffer_printf(str, "-- function num : %s", funcnumstr);
-	if (NUPS(f) > 0) {
-		StringBuffer_add(str, " , upvalues : ");
-		listUpvalues(f, str);
-	}
+	// StringBuffer_printf(str, "-- function num : %s", funcnumstr);
+	// if (NUPS(f) > 0) {
+	// 	StringBuffer_add(str, " , upvalues : ");
+	// 	listUpvalues(f, str);
+	// }
 	TRY(RawAddStatement(F, str));
 	StringBuffer_prune(str);
 
@@ -1937,20 +1939,20 @@ char* ProcessCode(Proto* f, int indent, int func_checking, char* funcnumstr) {
 				}
 			} else if (F->loop_ptr->start <= dest && dest < pc) {
 				if (isTestOpCode(o_1)) { //REPEAT jump back
-					/* 
+					/*
 					** if the out loop(loop_ptr) is while and body=loop_ptr.start,
 					** jump back may be 'until' or 'if', they are the same,
 					** but 'if' is more clear, so we skip making a loop to choose 'if'.
 					** see the lua code:
 					** local a,b,c,f
-					** 
+					**
 					** while 1 do
 					**	repeat
 					**		f(b)
 					**	until c
 					**	f(a)
 					** end
-					** 
+					**
 					** while 1 do
 					**	f(b)
 					** 	if c then
@@ -1991,19 +1993,19 @@ char* ProcessCode(Proto* f, int indent, int func_checking, char* funcnumstr) {
 
 		F->pc = pc;
 
-		// pop ËùÓÐ endpc < pc µÄ
+		// pop ï¿½ï¿½ï¿½ï¿½ endpc < pc ï¿½ï¿½
 		while (RvarTop > 0 && f->locvars[Rvar[RvarTop-1]].endpc < pc + 1) {
 			RvarTop--;
 			Rvar[RvarTop] = -1;
 		}
-		// push ËùÓÐ startpc <= pc µÄ£¬ÒÆµ½ÏÂÒ»¸öÎ´Ê¹ÓÃµÄ±äÁ¿
+		// push ï¿½ï¿½ï¿½ï¿½ startpc <= pc ï¿½Ä£ï¿½ï¿½Æµï¿½ï¿½ï¿½Ò»ï¿½ï¿½Î´Ê¹ï¿½ÃµÄ±ï¿½ï¿½ï¿½
 		while (currLocVar < f->sizelocvars && f->locvars[currLocVar].startpc <= pc + 1) {
 			Rvar[RvarTop] = currLocVar;
 			RvarTop++;
 			currLocVar++;
 			TestLocVarIndex(RvarTop-1, pc);
 		}
-		// ÄÇÃ´´ËÊ± vars[r] ¼´¶ÔÓ¦ reg[r] µÄ±äÁ¿
+		// ï¿½ï¿½Ã´ï¿½ï¿½Ê± vars[r] ï¿½ï¿½ï¿½ï¿½Ó¦ reg[r] ï¿½Ä±ï¿½ï¿½ï¿½
 
 		if (pc > F->loop_ptr->end) {
 			next_child = F->loop_ptr->next;
@@ -2128,11 +2130,11 @@ char* ProcessCode(Proto* f, int indent, int func_checking, char* funcnumstr) {
 				** try to process all while as " while 1 do if "
 				** see the lua code:
 				** local f, a, b, c
-				** 
+				**
 				** while test do
 				** 	whilebody
 				** end
-				** 
+				**
 				** while 1 do
 				** 	if test then
 				** 		whilebody
@@ -2628,7 +2630,7 @@ char* ProcessCode(Proto* f, int indent, int func_checking, char* funcnumstr) {
 				/*
 				* y = (a or b==c) -- assigne statement may be bool (calucate at last)
 				* constant boolean value
-				* JMP 
+				* JMP
 				* ....skipped , not decompiled
 				* ::jmp_target
 				* LOADBOOL

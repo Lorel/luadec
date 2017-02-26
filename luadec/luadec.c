@@ -48,6 +48,7 @@ int localdeclare[255][255];
 int functionnum;
 int process_sub = 1;            /* process sub functions? */
 int func_check=0;				/* compile decompiled function and compare? */
+int quietly=0;				/* output only source code */
 int string_encoding=GBK;
 int guess_locals=1;
 lua_State* glstate;
@@ -305,6 +306,9 @@ static int doargs(int argc, char* argv[]) {
 				}
 			}
 		}
+    else if (IS("-q")) {
+      quietly = 1;
+    }
 		else					/* unknown option */
 			usage("unrecognized option '%s'", argv[i]);
 	}
@@ -441,21 +445,25 @@ int main(int argc, char* argv[]) {
 	if (guess_locals) {
 		luaU_guess_locals(f,0);
 	}
-	if (disassemble) {
-		printf("; Disassembled using luadec " VERSION_STRING " for " LUA_VERSION " from https://github.com/viruscamp/luadec\n");
-		printf("; Command line: ");
-	} else {
-		printf("-- Decompiled using luadec " VERSION_STRING " for " LUA_VERSION " from https://github.com/viruscamp/luadec\n");
-		if (func_check) {
-			printf("-- function check Command line: ");
-		} else {
-			printf("-- Command line: ");
-		}
-	}
-	for (i=1; i<gargc; i++) {
-		printf("%s ",gargv[i]);
-	}
-	printf("\n\n");
+  if (!quietly) {
+  	if (disassemble) {
+  		printf("; Disassembled using luadec " VERSION_STRING " for " LUA_VERSION " from https://github.com/viruscamp/luadec\n");
+  		printf("; Command line: ");
+  	} else {
+  		printf("-- Decompiled using luadec " VERSION_STRING " for " LUA_VERSION " from https://github.com/viruscamp/luadec\n");
+  		if (func_check) {
+  			printf("-- function check Command line: ");
+  		} else {
+  			printf("-- Command line: ");
+  		}
+  	}
+  }
+  if (!quietly) {
+  	for (i=1; i<gargc; i++) {
+  		printf("%s ",gargv[i]);
+  	}
+  	printf("\n\n");
+  }
 	if (lds2) {
 		int i,i2;
 		for (i=-1; i<f->sizep; i++) {

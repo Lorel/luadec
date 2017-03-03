@@ -3167,7 +3167,7 @@ LOGIC_NEXT_JMP:
 	}
 
 	if (F->jmpdests.size > 0) {
-		StringBuffer_printf(str, "-- DECOMPILER ERROR: %d unprocessed JMP targets", F->jmpdests.size);
+		// StringBuffer_printf(str, "-- DECOMPILER ERROR: %d unprocessed JMP targets", F->jmpdests.size);
 		TRY(AddStatement(F, str));
 		while (F->jmpdests.head) {
 			AstStatement* jmpdest = cast(AstStatement*, RemoveFromList(&(F->jmpdests), F->jmpdests.head));

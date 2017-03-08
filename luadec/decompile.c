@@ -963,8 +963,8 @@ void UnsetPending(Function* F, int r) {
 	if (!IS_VARIABLE(r)) {
 		if (!PENDING(r) && !CALL(r)) {
 			if (guess_locals) {
-				sprintf(errortmp, "Confused about usage of register: R%d in 'UnsetPending'", r);
-				SET_ERROR(F, errortmp);
+				// sprintf(errortmp, "Confused about usage of register: R%d in 'UnsetPending'", r);
+				// SET_ERROR(F, errortmp);
 			} else {
 				sprintf(errortmp, "Confused about usage of register: R%d in 'UnsetPending'. Creating missing local", r);
 				SET_ERROR(F, errortmp);
